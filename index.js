@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import chalk from "chalk";
 
 //import routes
 import userRoute from "./routes/userRoute.js";
@@ -20,7 +21,7 @@ const mongoURI = process.env.MONGO_URI;
 mongoose
   .connect(mongoURI)
   .then(() => {
-    console.log("MongoDB connected successfully");
+    console.log(chalk.bgGreen("MongoDB connected successfully!\n"));
   })
   .catch((error) => {
     console.error("MongoDB connection error:", error);
@@ -30,5 +31,8 @@ mongoose
 app.use("/", userRoute);
 
 app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+  console.log(
+    chalk.gray("--------------------------------------------------------------")
+  );
+  console.log(`Server is running at ` + chalk.blue(`http://localhost:${port}`));
 });

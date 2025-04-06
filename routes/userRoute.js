@@ -1,8 +1,8 @@
 import express from "express";
 
 //import routes
-import { registerUser } from "../controllers/userController.js";
-import { loginUser } from "../controllers/userController.js";
+import { registerUser } from "../controllers/user-conterllers/add-user.js";
+import { loginUser } from "../controllers/user-conterllers/user-login.js";
 
 // Create a new router instance
 const router = express.Router();
