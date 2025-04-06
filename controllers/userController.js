@@ -1,30 +1,28 @@
 import bcrypt from "bcrypt";
 
-// Register a new user
+// Importing models
+import User from "../models/user.js";
+
+/// Function to handle user registration
 export const registerUser = async (req, res) => {
-  // Get user data from request body
   const { username, password, role } = req.body;
 
   try {
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user instance
-    const User = new User({
+    const user = new User({
       username,
       password: hashedPassword,
       role,
     });
 
-    // save the user to the database
-    await User.save().then(() => {
-      res.status(201).json({
-        message: "User registered successfully",
-        user: {
-          username: User.username,
-          role: User.role,
-        },
-      });
+    await user.save();
+    res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        username: user.username,
+        role: user.role,
+      },
     });
   } catch (error) {
     res.status(500).json({

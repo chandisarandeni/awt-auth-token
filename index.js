@@ -27,7 +27,7 @@ mongoose
   });
 
 //use routes
-app.use("/register", userRoute);
+app.use("/", userRoute);
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
