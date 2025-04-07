@@ -5,6 +5,7 @@ import chalk from "chalk";
 
 //import routes
 import userRoute from "./routes/userRoute.js";
+import productRoute from "./routes/productRoute.js";
 import { showLoadingAnimation } from "./controllers/common/loading-animation.js";
 
 // Load environment variables from .env file
@@ -35,6 +36,7 @@ connectToMongoDB();
 
 //use routes
 app.use("/", userRoute);
+app.use("/", productRoute)
 
 app.listen(port, () => {
   console.log(
