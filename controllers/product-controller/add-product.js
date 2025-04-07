@@ -1,5 +1,6 @@
 import express from "express";
 import chalk from "chalk";
+import jwt from "jsonwebtoken";
 
 // Import models
 import Product from "../../models/product.js";
@@ -8,25 +9,46 @@ export async function addProduct(req, res) {
   const { productId, productName, productDescription, productPrice } = req.body;
 
   try {
+    // Check if token is provided in authorization header
+    const token = req.headers.authorization?.split(" ")[1]; // Assuming Bearer token format
+    if (!token) {
+      console.log("Error: " + chalk.red("Authorization token is missing!"));
+      return res.status(401).json({
+        message: "Authorization token is missing!",
+      });
+    }
+
+    // Verify the token and extract user data
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      console.log("Error: " + chalk.red("Invalid or expired token!"));
+      return res.status(403).json({
+        message: "Invalid or expired token!",
+      });
+    }
+
+    // Check if the user has admin role
+    if (decodedToken.role !== "admin") {
+      console.log("Error: " + chalk.red("You are not authorized!"));
+      return res.status(403).json({
+        message: "You are not authorized!",
+      });
+    }
+
     // Check if product already exists
     const existingProduct = await Product.findOne({ productId });
     if (existingProduct) {
-      // Output error message to the terminal
-      console.log("");
       console.log("Add Product Error: " + chalk.red("Product already exists!"));
-
-      // Return error response
-      return res.status(201).json({
+      return res.status(400).json({
         message: "Product already exists!",
       });
     }
 
-    // Check filled all fields
+    // Check if all fields are filled
     if (!productId || !productName || !productDescription || !productPrice) {
-      // Output error message to the terminal
       console.log("Error: " + chalk.red("All fields are required!"));
-
-      // Return error response
       return res.status(400).json({
         message: "All fields are required!",
       });

@@ -22,46 +22,58 @@ export async function loginUser(req, res) {
   try {
     // Ensure username and password are provided
     if (!username || !password) {
-      //Output error message to the terminal
       console.log(
         "Login Error: " + chalk.red("username and password cannot be blank!")
       );
-
       return res.status(400).json({
         message: "username and password cannot be blank!",
       });
     }
 
-    // Fetch user by username
+    // Find user by username
     const user = await User.findOne({ username });
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      // Output error to the terminal
-      console.log("login Error: " + chalk.red("Invalid username or password!"));
-
+    if (!user) {
+      console.log("Login Error: " + chalk.red("Invalid username or password!"));
       return res.status(401).json({
-        message: "Invalid username or password",
+        message: "Invalid username or password!",
       });
     }
 
-    // Generate JWT token
-    const token = getAuthToken(user);
+    // Check if password is correct
+    const isPasswordCorrect = bcrypt.compareSync(password, user.password);
+    if (!isPasswordCorrect) {
+      console.log("Login Error: " + chalk.red("Invalid username or password!"));
+      return res.status(401).json({
+        message: "Invalid username or password!",
+      });
+    } else {
+      // Generate JWT token
+      const token = jwt.sign(
+        {
+          username: user.username,
+          role: user.role,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
 
-    // Output the details of the logged in user
-    console.log("");
-    console.log("User logged in:");
-    console.log(chalk.hex("#FF6600")("Username \t: ") + user.username);
-    console.log(chalk.hex("#FF6600")("Role \t\t: ") + user.role);
-    console.log(chalk.hex("#FF6600")("Token \t\t: ") + token);
+      // Log user details
+      console.log("");
+      console.log("User logged in:");
+      console.log(chalk.hex("#FF6600")("Username \t: ") + user.username);
+      console.log(chalk.hex("#FF6600")("Role \t\t: ") + user.role);
+      console.log(chalk.hex("#FF6600")("Token \t\t: ") + token);
 
-    // Return success response with token
-    return res.status(201).json({
-      message: "User logged in successfully",
-      user: {
-        username: user.username,
-        role: user.role,
-      },
-      token: token,
-    });
+      // Return success response with token
+      return res.status(201).json({
+        message: "User logged in successfully",
+        user: {
+          username: user.username,
+          role: user.role,
+        },
+        token: token,
+      });
+    }
   } catch (error) {
     console.error(chalk.red("Error during user login: "), error);
     return res.status(500).json({
@@ -69,6 +81,7 @@ export async function loginUser(req, res) {
     });
   }
 }
+
 
 function getAuthToken(user) {
   try {
