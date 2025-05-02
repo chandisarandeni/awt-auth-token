@@ -1,5 +1,8 @@
 # JWT Auth Token Demo
 
+![image](https://github.com/user-attachments/assets/c6e758eb-0260-41af-afef-88beaaff86d0)
+
+
 This repository demonstrates how JWT auth tokens work. It includes a simple example of adding a product with proper authentication using JWT.
 
 ## Getting Started
