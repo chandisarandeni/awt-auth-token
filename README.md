@@ -9,7 +9,7 @@ This repository demonstrates how JWT auth tokens work. It includes a simple exam
 
 ### Step 1: Clone the Repository
 ```sh
-git clone https://github.com/chandisarandeni/awt-auth-token.git
+https://github.com/chandisarandeni/jwt-auth-token.git
 ```
 
 ### Step 2: Set Up Environment Variables
